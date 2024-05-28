@@ -10,20 +10,30 @@ app.use(express.json());
 
 dotenv.config({ path: "./.env" });
 
+
 mongoose
-  .connect(process.env.MONGODB_ATLAS_URL)
-  .then((err) => {
+  .connect(process.env.MONGODB_ATLAS_URL, {
+    serverSelectionTimeoutMS: 30000, 
+    socketTimeoutMS: 45000, 
+    family: 4 
+  })
+  .then(() => {
     console.log("MyDB is connected");
   })
   .catch((err) => {
-    console.log("Check your internet connection");
+    console.error("Failed to connect to MongoDB", err);
   });
 
 
+
+  
+
+
 app.listen(process.env.SERVER_PORT, () => {
-  console.log("server is running");
+  console.log("server is running on port: "+process.env.SERVER_PORT);
 });
 
 
 
+app.use("/note", require("./routes/note"));
 app.use("/auth", require("./routes/auth"));
