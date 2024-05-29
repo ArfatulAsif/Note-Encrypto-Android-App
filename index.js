@@ -13,9 +13,7 @@ dotenv.config({ path: "./.env" });
 
 mongoose
   .connect(process.env.MONGODB_ATLAS_URL, {
-    serverSelectionTimeoutMS: 30000, 
-    socketTimeoutMS: 45000, 
-    family: 4 
+    
   })
   .then(() => {
     console.log("MyDB is connected");
