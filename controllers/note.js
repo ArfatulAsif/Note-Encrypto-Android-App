@@ -5,7 +5,6 @@ const jwt = require("jsonwebtoken");
 
 
 
-
 exports.addNote = async (req, res) => {
   try {
     const { topic_name, note_text } = req.body;
