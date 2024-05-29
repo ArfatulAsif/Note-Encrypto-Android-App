@@ -74,3 +74,41 @@ exports.getNotes = async (req, res) => {
       res.status(500).json({ message: "Internal Server Error" });
     }
   };
+
+
+
+
+
+  exports.getNoteById = async (req, res) => {
+    try {
+        const token = req.headers.authorization.split(' ')[1];
+        const noteId = req.headers.note_id;
+
+        if (!token || !noteId) {
+            return res.status(400).json({ message: "Token and Note ID are required" });
+        }
+
+        // Find the user by token
+        const user = await User.findOne({ token });
+        if (!user) {
+            return res.status(401).json({ message: "Unauthorized" });
+        }
+
+        // Find the note by ID
+        const note = await Note.findById(noteId);
+        if (!note) {
+            return res.status(404).json({ message: "Note not found" });
+        }
+
+        // Verify if the note belongs to the user
+        if (note.user_id !== user._id.toString()) {
+            return res.status(401).json({ message: "Unauthorized" });
+        }
+
+        // Return the note
+        res.status(200).json(note);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+};
