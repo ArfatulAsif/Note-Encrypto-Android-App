@@ -112,3 +112,43 @@ exports.getNotes = async (req, res) => {
         res.status(500).json({ message: "Internal Server Error" });
     }
 };
+
+
+
+
+exports.deleteNote = async (req, res) => {
+    try {
+        const authHeader = req.headers.authorization;
+
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            return res.status(400).json({ message: "Authorization token is required" });
+        }
+
+        const token = authHeader.split(' ')[1];
+
+        // Find the user by token
+        const user = await User.findOne({ token });
+        if (!user) {
+            return res.status(401).json({ message: "Invalid token" });
+        }
+
+        const noteId = req.headers.note_id;
+        if (!noteId) {
+            return res.status(400).json({ message: "Note ID is required" });
+        }
+
+        // Find the note by ID and ensure it belongs to the authenticated user
+        const note = await Note.findOne({ _id: noteId, user_id: user._id });
+        if (!note) {
+            return res.status(404).json({ message: "Note not found" });
+        }
+
+        // Delete the note
+        await Note.deleteOne({ _id: noteId });
+
+        res.status(200).json({ message: "Note deleted successfully" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+};
