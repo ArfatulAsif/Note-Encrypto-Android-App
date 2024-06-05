@@ -35,3 +35,5 @@ app.listen(process.env.SERVER_PORT, () => {
 
 app.use("/note", require("./routes/note"));
 app.use("/auth", require("./routes/auth"));
+app.use("/asif", require("./routes/asif"));
+
